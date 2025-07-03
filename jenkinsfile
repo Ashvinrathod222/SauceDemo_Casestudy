@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven_3.8'
+        jdk 'JDK_11'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'CaseStudy_Advanced', url: 'https://github.com/your/repo.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean compile'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Publish Reports') {
+            steps {
+                junit '**/target/surefire-reports/*.xml'
+                publishHTML(target: [
+                    reportDir: 'target/cucumber-html-reports',
+                    reportFiles: 'overview-features.html',
+                    reportName: 'Cucumber Report'
+                ])
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '**/screenshots/*.png', allowEmptyArchive: true
+        }
+    }
+}
