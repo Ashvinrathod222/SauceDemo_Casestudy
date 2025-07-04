@@ -7,7 +7,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
-
+import java.util.HashMap;
+import java.util.Map;
+import org.openqa.selenium.chrome.ChromeOptions;
 import hooks.Hooks;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -43,9 +45,11 @@ public class stepDefinations {
 		driver.findElement(By.id("login-button")).click();
 		Thread.sleep(2000);
 		try {
-			Alert alert = driver.switchTo().alert();
-			System.out.println("Alert text: " + alert.getText());
-			alert.accept();
+			ChromeOptions options = new ChromeOptions();
+			Map<String, Object> prefs = new HashMap<String, Object>();
+	        prefs.put("credentials_enable_service", false);
+	        prefs.put("profile.password_manager_enabled", false);
+	        options.addArguments("--remote-allow-origins=*");
 		} catch (NoAlertPresentException e) {
 			System.out.println("No alert displayed.");
 		}
