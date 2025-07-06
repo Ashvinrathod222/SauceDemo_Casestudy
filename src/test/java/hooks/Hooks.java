@@ -18,39 +18,36 @@ public class Hooks {
     @Before
     public void setup() {
         config.loadProperties(); // Ensure your config is loaded
-        String browser = config.get("browser"); // Assuming you have a "browser" property in your config
 
+        // Get browser from config, provide a default if null or empty
+        String browser = config.get("browser");
+        if (browser == null || browser.trim().isEmpty()) {
+            System.out.println("Browser property not found or is empty in config. Defaulting to 'chrome'.");
+            browser = "chrome"; // Set a default browser
+        }
+        
         ChromeOptions options = new ChromeOptions();
-        
-        // Add argument for Incognito mode (if you still want it)
         options.addArguments("--incognito"); 
-        
-        // Essential argument for modern Chrome/ChromeDriver versions
         options.addArguments("--remote-allow-origins=*"); 
 
-        // --- Preferences to disable password manager popups, including data breach warning ---
         Map<String, Object> prefs = new HashMap<>();
-        prefs.put("credentials_enable_service", false); // Disables "Do you want to save password?"
-        prefs.put("profile.password_manager_enabled", false); // Disables built-in password manager
-        prefs.put("profile.password_manager_leak_detection", false); // THIS IS THE KEY ONE FOR DATA BREACH WARNING
+        prefs.put("credentials_enable_service", false);
+        prefs.put("profile.password_manager_enabled", false);
+        prefs.put("profile.password_manager_leak_detection", false); 
         options.setExperimentalOption("prefs", prefs);
-        // -----------------------------------------------------------------------------------
 
         if (browser.equalsIgnoreCase("chrome")) {
-            driver = new ChromeDriver(options); // Pass the configured options here
+            driver = new ChromeDriver(options); 
         } else if (browser.equalsIgnoreCase("firefox")) {
-            // For Firefox, you'd use FirefoxOptions and set different preferences
-            // For example, to disable password save in Firefox:
-            // FirefoxOptions firefoxOptions = new FirefoxOptions();
-            // firefoxOptions.addPreference("signon.rememberSignons", false);
-            // driver = new FirefoxDriver(firefoxOptions);
-            driver = new FirefoxDriver(); // Default Firefox
+            // Add Firefox specific options if needed for private mode or password handling
+            driver = new FirefoxDriver(); 
         } else if (browser.equalsIgnoreCase("edge")) {
-            // Similar for Edge, use EdgeOptions
-            driver = new EdgeDriver(); // Default Edge
+            // Add Edge specific options if needed
+            driver = new EdgeDriver(); 
         } else {
-            System.out.println("Invalid browser specified in config. Defaulting to Chrome.");
-            driver = new ChromeDriver(options); // Default to Chrome with Incognito and popup disabled
+            // Fallback for an unrecognized browser value
+            System.out.println("Unrecognized browser specified in config: '" + browser + "'. Defaulting to Chrome.");
+            driver = new ChromeDriver(options); 
         }
 
         driver.manage().window().maximize();
