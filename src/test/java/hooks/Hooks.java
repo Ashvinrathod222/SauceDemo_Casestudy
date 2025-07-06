@@ -9,7 +9,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import java.util.HashMap;
 import java.util.Map;
-import utils.config; // Assuming you have a config utility
+import utils.config; 
 
 public class Hooks {
 
@@ -17,13 +17,13 @@ public class Hooks {
 
     @Before
     public void setup() {
-        config.loadProperties(); // Ensure your config is loaded
+        config.loadProperties(); 
 
-        // Get browser from config, provide a default if null or empty
+    
         String browser = config.get("browser");
         if (browser == null || browser.trim().isEmpty()) {
             System.out.println("Browser property not found or is empty in config. Defaulting to 'chrome'.");
-            browser = "chrome"; // Set a default browser
+            browser = "chrome";
         }
         
         ChromeOptions options = new ChromeOptions();
@@ -39,19 +39,16 @@ public class Hooks {
         if (browser.equalsIgnoreCase("chrome")) {
             driver = new ChromeDriver(options); 
         } else if (browser.equalsIgnoreCase("firefox")) {
-            // Add Firefox specific options if needed for private mode or password handling
             driver = new FirefoxDriver(); 
         } else if (browser.equalsIgnoreCase("edge")) {
-            // Add Edge specific options if needed
             driver = new EdgeDriver(); 
         } else {
-            // Fallback for an unrecognized browser value
             System.out.println("Unrecognized browser specified in config: '" + browser + "'. Defaulting to Chrome.");
             driver = new ChromeDriver(options); 
         }
 
         driver.manage().window().maximize();
-        // You might want to add implicit waits or page load timeouts here
+        
     }
 
     @After
